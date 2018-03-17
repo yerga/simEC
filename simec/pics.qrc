@@ -1,0 +1,7 @@
+<RCC>
+  <qresource>
+    <file>figs/E.png</file>
+    <file>figs/EC.png</file>
+    <file>figs/ECE.png</file>
+  </qresource>
+</RCC>
