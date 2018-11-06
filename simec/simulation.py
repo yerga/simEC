@@ -27,7 +27,7 @@ import math as mt
 class Simulation():
     def __init__(self, simconfig):
         technique, mechanism, Estart, Eswitch, scanrate, Eform, n, ko, alpha, D, area, temp, conc_bulk, \
-            kcf, kcr, EstartAmp, t1, Epulse, tend = simconfig
+            kcf, kcr, EstartAmp, t1, Epulse, tend, Cdl = simconfig
 
         tunits = 1000
         xunits = 100
@@ -79,13 +79,17 @@ class Simulation():
         # times using two loops (Estart -> Eswitch and Eswitch -> Estart)
         if technique == "Voltammetry":
             self.potential = [Estart] * (tunits + 1)
+            self.capcurrent = [0.0] * (tunits + 1)
             for i in range(int(tunits / 2)):
                 # print(i, potential[i], potential[i] - scanrate*deltat)
                 self.potential[i + 1] = self.potential[i] - scanrate * deltat
+                self.capcurrent[i] = - area * Cdl * 1e-6 * scanrate
             for i in range(int((1 + tunits) / 2), tunits):
                 # print(i, potential[i], potential[i] + scanrate*deltat)
                 self.potential[i + 1] = self.potential[i] + scanrate * deltat
+                self.capcurrent[i] = area * Cdl * 1e-6 * scanrate
         else:
+            #TODO: add capacitive current for chronoamperometry
             pot1 = [Estart] * round(tunits*t1/ttot)
             pot2 = [Epulse] * (tunits-len(pot1)+1)
             self.potential = pot1 + pot2
@@ -151,7 +155,7 @@ class Simulation():
                 self.cred[i][0] = self.cred[i][1] + jred[i] * deltax / D
                 self.cchem[i][0] = self.cchem[i][1]
 
-            self.current_total[i] = n * F * area * jox[i]
+            self.current_total[i] = n * F * area * jox[i] + self.capcurrent[i]
 
 
         if technique == "Chronoamperometry":

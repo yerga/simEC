@@ -104,7 +104,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabMechanism">
        <attribute name="title">
@@ -439,6 +439,16 @@
              </item>
              <item>
               <widget class="QLineEdit" name="templine"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_21">
+               <property name="text">
+                <string>Cdl (uF/cm2)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="Cdlline"/>
              </item>
             </layout>
            </item>

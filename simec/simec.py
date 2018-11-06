@@ -87,6 +87,8 @@ class MainWindow (QMainWindow):
         self.arealine.setText("0.1")
         self.templine = self.ui.templine
         self.templine.setText("298")
+        self.Cdlline = self.ui.Cdlline
+        self.Cdlline.setText("0")
 
         self.staticCB = self.ui.staticBt
         self.firstplotCB = self.ui.firstplotCB
@@ -160,9 +162,10 @@ class MainWindow (QMainWindow):
         tstart = float(self.tstartline.text())
         Epulse = float(self.Epulseline.text())
         tpulse = float(self.tpulseline.text())
+        Cdl = float(self.Cdlline.text())
 
         simconfig = [technique, mechanism, Estart, Eswitch, scanrate, Eform, n, k0, alpha, diffcoef, area, temp,
-                     conc_bulk, kcf, kcr, EstartAmp, tstart, Epulse, tpulse]
+                     conc_bulk, kcf, kcr, EstartAmp, tstart, Epulse, tpulse, Cdl]
 
         return simconfig
 

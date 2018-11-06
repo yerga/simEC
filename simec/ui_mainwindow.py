@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -47,7 +47,6 @@ class Ui_MainWindow(object):
         self.tabMechanism = QtWidgets.QWidget()
         self.tabMechanism.setObjectName("tabMechanism")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.tabMechanism)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.mechanismLayout = QtWidgets.QVBoxLayout()
         self.mechanismLayout.setObjectName("mechanismLayout")
@@ -80,7 +79,6 @@ class Ui_MainWindow(object):
         self.tabReaction = QtWidgets.QWidget()
         self.tabReaction.setObjectName("tabReaction")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.tabReaction)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox = QtWidgets.QGroupBox(self.tabReaction)
         self.groupBox.setObjectName("groupBox")
@@ -220,13 +218,18 @@ class Ui_MainWindow(object):
         self.templine = QtWidgets.QLineEdit(self.groupBox_4)
         self.templine.setObjectName("templine")
         self.horizontalLayout_7.addWidget(self.templine)
+        self.label_21 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_21.setObjectName("label_21")
+        self.horizontalLayout_7.addWidget(self.label_21)
+        self.Cdlline = QtWidgets.QLineEdit(self.groupBox_4)
+        self.Cdlline.setObjectName("Cdlline")
+        self.horizontalLayout_7.addWidget(self.Cdlline)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
         self.verticalLayout_2.addWidget(self.groupBox_4)
         self.tabWidget.addTab(self.tabReaction, "")
         self.tabOptions = QtWidgets.QWidget()
         self.tabOptions.setObjectName("tabOptions")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.tabOptions)
-        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.groupBox_5 = QtWidgets.QGroupBox(self.tabOptions)
         self.groupBox_5.setObjectName("groupBox_5")
@@ -315,7 +318,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuAbout.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -355,6 +358,7 @@ class Ui_MainWindow(object):
         self.label_14.setText(_translate("MainWindow", "Diff Coef"))
         self.label_16.setText(_translate("MainWindow", "Area (cm2)"))
         self.label_17.setText(_translate("MainWindow", "T (K)"))
+        self.label_21.setText(_translate("MainWindow", "Cdl (uF/cm2)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabReaction), _translate("MainWindow", "Reaction"))
         self.groupBox_5.setTitle(_translate("MainWindow", "GroupBox"))
         self.staticBt.setText(_translate("MainWindow", "Static plot"))
