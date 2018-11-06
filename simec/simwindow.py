@@ -31,6 +31,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import numpy as np
+import expdata
 
 TIMERLIST = []
 RUNBUTTON = []
@@ -58,18 +59,23 @@ class MyMplCanvas(FigureCanvas):
 
 
 class MyDynamicMplCanvas(MyMplCanvas):
-    def __init__(self, xdata, ydata, static=True, *args, **kwargs):
+    def __init__(self, xdata, ydata, static=True, expfile=None, *args, **kwargs):
         MyMplCanvas.__init__(self, *args, **kwargs)
 
         self.xdata = xdata
         self.ydata = ydata
         self.static = static
+        self.expfile = expfile
 
         self.numelements = len(self.xdata)
         self.labelx = 'E / V'
         self.labely = 'i / $\mu$A'
         self.title = 'Voltammetry'
         self.i = 0
+
+        if self.expfile:
+            getdata = expdata.GetData(expfile)
+            self.expxdata, self.expydata = getdata.get_data()
 
         if self.static:
             self.update_figure()
@@ -90,8 +96,12 @@ class MyDynamicMplCanvas(MyMplCanvas):
 
         if self.static:
             self.axes.plot(self.xdata, self.ydata, 'b', label="cox")
+            if self.expfile:
+                self.axes.plot(self.expxdata, self.expydata, 'r', label="exp")
         else:
             self.axes.plot(self.xdata[0:self.i], self.ydata[0:self.i], 'b', label="cox")
+            if self.expfile:
+                self.axes.plot(self.expxdata[0:self.i], self.expydata[0:self.i], 'r', label="cox")
 
         self.axes.set_title(self.title)
 
@@ -112,7 +122,7 @@ class MyDynamicMplCanvas(MyMplCanvas):
 
 
 class SimWindow (QMainWindow):
-    def __init__(self, parent=None, simdata=None, static=True, firstplot="i vs E"):
+    def __init__(self, parent=None, simdata=None, static=True, firstplot="i vs E", expfile=None):
         QMainWindow.__init__(self, parent)
 
         potential, current, distance, time, cox, cred, cchem = simdata
@@ -140,7 +150,7 @@ class SimWindow (QMainWindow):
             xdata = current
             ydata = potential
 
-        dc = MyDynamicMplCanvas(width=4, height=4, dpi=100, xdata=xdata, ydata=ydata, static=static)
+        dc = MyDynamicMplCanvas(width=4, height=4, dpi=100, xdata=xdata, ydata=ydata, static=static, expfile=expfile)
 
         self.setGeometry(400,400,400,400)
         toolbar = NavigationToolbar(dc, self)

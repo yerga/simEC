@@ -22,7 +22,7 @@ __program__ = "simEC"
 __version__ = "0.0.1"
 
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from ui_mainwindow import Ui_MainWindow
 from simwindow import SimWindow
 from simulation import Simulation
@@ -92,7 +92,9 @@ class MainWindow (QMainWindow):
         self.firstplotCB = self.ui.firstplotCB
         self.secondplotCB = self.ui.secondplotCB
         self.expfileline = self.ui.expFileline
+
         self.browseBtn = self.ui.browseBtn
+        self.browseBtn.clicked.connect(self.selectExpFile)
 
         self.runButton = self.ui.runButton
         self.runButton.clicked.connect(self.runSimulation)
@@ -132,8 +134,9 @@ class MainWindow (QMainWindow):
         # Show plots in new widget
         static = self.staticCB.isChecked()
         firstplot = self.firstplotCB.currentText()
+        expfile = (self.expfileline.text())
 
-        simwindow = SimWindow(self, simdata, static, firstplot)
+        simwindow = SimWindow(self, simdata, static, firstplot, expfile)
         simwindow.show()
 
 
@@ -163,6 +166,10 @@ class MainWindow (QMainWindow):
 
         return simconfig
 
+    def selectExpFile(self):
+        filename, ffilter = QFileDialog.getOpenFileName(self, 'Select file')
+        if filename:
+            self.expfileline.setText(filename)
 
 
 if __name__ == "__main__":
