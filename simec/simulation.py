@@ -51,13 +51,18 @@ class Simulation():
             cred_bulk = 0
             cchem_bulk = 0
 
+        if (Estart > Eswitch):
+            sweepsign = -1
+        else:
+            sweepsign = +1
+
 
         # ttot: time to complete one full sweep from e.start to e.start
         # tunits: number of discrete times used to calculate results
         # deltat: increment in time
         # time: vector of discrete times for diffusion grid
         if technique == "Voltammetry":
-            ttot = 2 * (Estart - Eswitch) / scanrate
+            ttot = 2 * abs(Estart - Eswitch) / scanrate
             deltat = ttot / tunits
             self.time = np.arange(0, ttot + deltat, deltat)
         elif technique == "Chronoamperometry":
@@ -82,12 +87,12 @@ class Simulation():
             self.capcurrent = [0.0] * (tunits + 1)
             for i in range(int(tunits / 2)):
                 # print(i, potential[i], potential[i] - scanrate*deltat)
-                self.potential[i + 1] = self.potential[i] - scanrate * deltat
-                self.capcurrent[i] = - area * Cdl * 1e-6 * scanrate
+                self.potential[i + 1] = self.potential[i] + scanrate * deltat * sweepsign
+                self.capcurrent[i] = area * Cdl * 1e-6 * scanrate * sweepsign
             for i in range(int((1 + tunits) / 2), tunits):
                 # print(i, potential[i], potential[i] + scanrate*deltat)
-                self.potential[i + 1] = self.potential[i] + scanrate * deltat
-                self.capcurrent[i] = area * Cdl * 1e-6 * scanrate
+                self.potential[i + 1] = self.potential[i] - scanrate * deltat * sweepsign
+                self.capcurrent[i] = - area * Cdl * 1e-6 * scanrate * sweepsign
         else:
             #TODO: add capacitive current for chronoamperometry
             pot1 = [Estart] * round(tunits*t1/ttot)
