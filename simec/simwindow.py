@@ -16,10 +16,9 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import unicode_literals
 __author__ = "Daniel Martin-Yerga"
 __email__ = "dyerga@gmail.com"
-__copyright__ = "Copyright 2018"
 __license__ = "GPLv3"
 __program__ = "simEC"
-__version__ = "0.0.1"
+__version__ = "0.1"
 
 
 from PyQt5.QtWidgets import QMainWindow, QSizePolicy, QVBoxLayout
@@ -31,7 +30,9 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 import numpy as np
+from scipy.interpolate import interp1d
 import expdata
+
 
 TIMERLIST = []
 RUNBUTTON = []
@@ -59,13 +60,14 @@ class MyMplCanvas(FigureCanvas):
 
 
 class MyDynamicMplCanvas(MyMplCanvas):
-    def __init__(self, xdata, ydata, static=True, expfile=None, *args, **kwargs):
+    def __init__(self, xdata, ydata, static=True, expfile=None, blank=False, *args, **kwargs):
         MyMplCanvas.__init__(self, *args, **kwargs)
 
         self.xdata = xdata
         self.ydata = ydata
         self.static = static
         self.expfile = expfile
+        self.blank = blank
 
         self.numelements = len(self.xdata)
         self.labelx = 'E / V'
@@ -76,6 +78,55 @@ class MyDynamicMplCanvas(MyMplCanvas):
         if self.expfile:
             getdata = expdata.GetData(expfile)
             self.expxdata, self.expydata = getdata.get_data()
+
+            lenxdata = len(self.xdata)
+            lenydata = len(self.ydata)
+
+            halfx = self.xdata[0:int(lenxdata/2)]
+            halfy = self.ydata[0:int(lenydata/2)]
+            endx = self.xdata[int(lenxdata/2):len(self.xdata)]
+            endy = self.ydata[int(lenydata/2):len(self.ydata)]
+
+            if self.blank:
+                # Get data from blank experimental file
+                blankfile = expfile.replace('.', '_blank.')
+                blankdata = expdata.GetData(blankfile)
+                self.blankxdata, self.blankydata = blankdata.get_data()
+                self.blankydata = np.array(self.blankydata)
+
+                # Calculate len and split forward and backward sweeps
+                lenexpx = len(self.blankxdata)
+                halfblankx = self.blankxdata[0:int(lenexpx/2)]
+                endblankx = self.blankxdata[int(lenexpx/2):len(self.blankxdata)]
+                lenhalfx = len(halfblankx)
+                lenendx = len(endblankx)
+            else:
+                lenhalfx = len(halfx)
+                lenendx = len(endx)
+
+            # Forward sweep with number of
+            x = np.linspace(halfx[0], halfx[len(halfx)-1], num=lenhalfx)
+            # Backward sweep
+            x2 = np.linspace(endx[0], endx[len(endx)-1], num=lenendx)
+
+            # Make interpolation function of forward and backward sweeps for the simulated current
+            fhalf = interp1d(halfx, halfy, 'cubic')
+            fend = interp1d(endx, endy, 'cubic')
+
+            # Calculate the new simulated ydata
+            newyhalf = fhalf(x)
+            newyend = fend(x2)
+
+            # Join together forward and backward sweeps
+            self.ydata = np.append(newyhalf, newyend)
+            self.xdata = np.append(x, x2)
+
+
+            if self.blank:
+                # Join experimental blank data with simulated data
+                self.ydata = self.blankydata + self.ydata
+                self.xdata = self.blankxdata
+
 
         if self.static:
             self.update_figure()
@@ -116,18 +167,20 @@ class MyDynamicMplCanvas(MyMplCanvas):
             RUNBUTTON[0].setEnabled(True)
         else:
             if self.i >= self.numelements:
+                #FIXME: when dynamic plotting expfile + simulated - it stops before the end potential
                 for timer in TIMERLIST:
                     timer.stop()
                 RUNBUTTON[0].setEnabled(True)
 
 
 class SimWindow (QMainWindow):
-    def __init__(self, parent=None, simdata=None, static=True, firstplot="i vs E", expfile=None):
+    def __init__(self, parent=None, simdata=None, static=True, firstplot="i vs E", expfile=None, blank=False):
         QMainWindow.__init__(self, parent)
 
         potential, current, distance, time, cox, cred, cchem = simdata
 
         # FIXME: Small hack to enable/disable the mainwindow RunButton with a global variable
+        # FIXME: when it fails, the button gets irreversibly disabled
         RUNBUTTON.append(parent.runButton)
         RUNBUTTON[0].setEnabled(False)
 
@@ -150,7 +203,7 @@ class SimWindow (QMainWindow):
             xdata = current
             ydata = potential
 
-        dc = MyDynamicMplCanvas(width=4, height=4, dpi=100, xdata=xdata, ydata=ydata, static=static, expfile=expfile)
+        dc = MyDynamicMplCanvas(width=4, height=4, dpi=100, xdata=xdata, ydata=ydata, static=static, expfile=expfile, blank=blank)
 
         self.setGeometry(400,400,400,400)
         toolbar = NavigationToolbar(dc, self)

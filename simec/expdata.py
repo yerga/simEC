@@ -16,11 +16,9 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Daniel Martin-Yerga"
 __email__ = "dyerga@gmail.com"
-__copyright__ = "Copyright 2018"
-__date__ = "6/11/18"
 __license__ = "GPLv3"
-__program__ = "plotSciFigs"
-__version__ = "0.0.1"
+__program__ = "simEC"
+__version__ = "0.1"
 
 import csv
 import numpy as np

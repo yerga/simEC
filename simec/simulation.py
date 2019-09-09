@@ -16,18 +16,17 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = "Daniel Martin-Yerga"
 __email__ = "dyerga@gmail.com"
-__copyright__ = "Copyright 2018"
 __license__ = "GPLv3"
 __program__ = "simEC"
-__version__ = "0.0.1"
+__version__ = "0.1"
 
 import numpy as np
 import math as mt
 
 class Simulation():
     def __init__(self, simconfig):
-        technique, mechanism, Estart, Eswitch, scanrate, Eform, n, ko, alpha, D, area, temp, conc_bulk, \
-            kcf, kcr, EstartAmp, t1, Epulse, tend, Cdl = simconfig
+        technique, mechanism, Estart, Eswitch, scanrate, Eform, n, ko, alpha, D, D2, area, temp, conc_bulk, \
+            kcf, kcr, EstartAmp, t1, Epulse, tend, Cdl, shift, ru = simconfig
 
         tunits = 1000
         xunits = 100
@@ -104,7 +103,7 @@ class Simulation():
         # lambda: simulation parameter (just a gathering of constants)
         kf = ko * np.exp(-alpha * n * F * (np.array(self.potential) - Eform) / (R * temp))
         kb = ko * np.exp((1 - alpha) * n * F * (np.array(self.potential) - Eform) / (R * temp))
-        alambda = D * deltat / (deltax) ** 2
+
 
         # initialize diffusion grid (rows = time; cols = distance)
         #  using bulk concentrations for ox and for red
@@ -123,6 +122,10 @@ class Simulation():
         # the diffusion grid first is calculated at all distances except for
         # that at the electrode surface and then calculated at the electrode
         # surface; finally, the current is calculate for each time
+
+        alambda = D * deltat / (deltax) ** 2
+        #TODO: option for both diffusion coefficients
+        #alambda2 = D2 * deltat / (deltax) ** 2
 
         for i in range(1, tunits + 1):
             for j in range(1, xunits):
@@ -162,9 +165,15 @@ class Simulation():
 
             self.current_total[i] = n * F * area * jox[i] + self.capcurrent[i]
 
+        self.current_total = np.array(self.current_total) + 1e-6*shift
+
+
+        # Calculate iR drop and correct potentials
+        irdrop = ru * self.current_total
+        self.potential = self.potential + irdrop
 
         if technique == "Chronoamperometry":
-            #FIXME: something with tend in CA
+            #FIXME: something wrong with tend in CA
             lists = [self.potential, self.current_total, self.time, self.cox, self.cred, self.cchem]
             for lista in lists:
                 if type(lista) == np.ndarray:

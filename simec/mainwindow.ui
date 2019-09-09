@@ -20,7 +20,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QPushButton" name="backButton">
+         <widget class="QPushButton" name="loadButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -28,22 +28,22 @@
            </size>
           </property>
           <property name="text">
-           <string>Back</string>
+           <string>Load</string>
           </property>
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+         <widget class="QPushButton" name="saveButton">
+          <property name="minimumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>0</width>
+            <height>50</height>
            </size>
           </property>
-         </spacer>
+          <property name="text">
+           <string>Save</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="settingsButton">
@@ -59,6 +59,19 @@
          </widget>
         </item>
         <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <widget class="QPushButton" name="runButton">
           <property name="minimumSize">
            <size>
@@ -72,7 +85,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="horizontalSpacer_2">
+         <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -85,7 +98,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="nextButton">
+         <widget class="QPushButton" name="helpButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -93,7 +106,20 @@
            </size>
           </property>
           <property name="text">
-           <string>Next</string>
+           <string>Help</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="aboutButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>About simEC</string>
           </property>
          </widget>
         </item>
@@ -216,7 +242,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="voltBox">
           <property name="title">
            <string>Voltammetry</string>
           </property>
@@ -253,13 +279,23 @@
              <item>
               <widget class="QLineEdit" name="scanrateline"/>
              </item>
+             <item>
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>Shift</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="shiftEdit"/>
+             </item>
             </layout>
            </item>
           </layout>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="ampBox">
           <property name="title">
            <string>Chronoamperometry</string>
           </property>
@@ -409,12 +445,22 @@
              <item>
               <widget class="QLabel" name="label_14">
                <property name="text">
-                <string>Diff Coef</string>
+                <string>D</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLineEdit" name="diffcoefline"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="dblabel">
+               <property name="text">
+                <string>Db</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="diffcoef2line"/>
              </item>
             </layout>
            </item>
@@ -449,6 +495,16 @@
              </item>
              <item>
               <widget class="QLineEdit" name="Cdlline"/>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_23">
+               <property name="text">
+                <string>Ru (Ohm)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="ruline"/>
              </item>
             </layout>
            </item>
@@ -565,23 +621,38 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
-              <widget class="QLabel" name="label_20">
-               <property name="text">
-                <string>Experimental data</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <item>
+                <widget class="QLabel" name="label_20">
+                 <property name="text">
+                  <string>Experimental data</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="expFileline"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="browseBtn">
+                 <property name="text">
+                  <string>Browse</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QLineEdit" name="expFileline"/>
-             </item>
-             <item>
-              <widget class="QPushButton" name="browseBtn">
-               <property name="text">
-                <string>Browse</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="QCheckBox" name="blankcb">
+                 <property name="text">
+                  <string>Overlap simulated response to blank</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -593,33 +664,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionQuit"/>
-   </widget>
-   <widget class="QMenu" name="menuAbout">
-    <property name="title">
-     <string>About</string>
-    </property>
-    <addaction name="actionHelp"/>
-    <addaction name="actionAbout_simEC"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout_simEC">
